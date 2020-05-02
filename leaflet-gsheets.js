@@ -13,7 +13,7 @@ function init() {
   var polyURL =
     "https://docs.google.com/spreadsheets/d/1EUFSaqi30b6oefK0YWWNDDOzwmCTTXlXkFHAc2QrUxM/edit?usp=sharing";
   var pointsURL =
-    "https://docs.google.com/spreadsheets/d/1kjJVPF0LyaiaDYF8z_x23UulGciGtBALQ1a1pK0coRM/edit?usp=sharing";
+    "https://docs.google.com/spreadsheets/d/1jBndsqchkcmiYXSIMU6U72jIQG5FId7mVMbrHJitAlI/edit?usp=sharing";
 
   Tabletop.init({ key: polyURL, callback: addPolygons, simpleSheet: true });
   Tabletop.init({ key: pointsURL, callback: addPoints, simpleSheet: true }); // simpleSheet assumes there is only one table and automatically sends its data
@@ -21,7 +21,7 @@ function init() {
 window.addEventListener("DOMContentLoaded", init);
 
 // Create a new Leaflet map centered on the continental US
-var map = L.map("map").setView([40, -100], 4);
+var map = L.map("map").setView([-34.17500, 24.8300], 14);
 
 // This is the Carto Positron basemap
 var basemap = L.tileLayer(
@@ -186,7 +186,7 @@ function addPoints(data) {
     var icon = L.AwesomeMarkers.icon({
       icon: "info-sign",
       iconColor: "white",
-      markerColor: getColor(data[row].category),
+      markerColor: getColor(data[row].property_type),
       prefix: "glyphicon",
       extraClasses: "fa-rotate-0"
     });
@@ -200,9 +200,9 @@ function addPoints(data) {
 // Used for the points layer
 function getColor(type) {
   switch (type) {
-  case "Coffee Shop":
+  case "plot":
     return "green";
-  case "Restaurant":
+  case "house":
     return "blue";
   default:
     return "green";
