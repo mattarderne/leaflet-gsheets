@@ -10,12 +10,12 @@ function init() {
   // PASTE YOUR URLs HERE
   // these URLs come from Google Sheets 'shareable link' form
   // the first is the polygon layer and the second the points
-  var polyURL =
-    "https://docs.google.com/spreadsheets/d/1EUFSaqi30b6oefK0YWWNDDOzwmCTTXlXkFHAc2QrUxM/edit?usp=sharing";
-  var pointsURL =
+  // var polyURL =
+  //   // "https://docs.google.com/spreadsheets/d/1EUFSaqi30b6oefK0YWWNDDOzwmCTTXlXkFHAc2QrUxM/edit?usp=sharing";
+  var pointsURL = 
     "https://docs.google.com/spreadsheets/d/1jBndsqchkcmiYXSIMU6U72jIQG5FId7mVMbrHJitAlI/edit?usp=sharing";
 
-  Tabletop.init({ key: polyURL, callback: addPolygons, simpleSheet: true });
+  // Tabletop.init({ key: polyURL, callback: addPolygons, simpleSheet: true });
   Tabletop.init({ key: pointsURL, callback: addPoints, simpleSheet: true }); // simpleSheet assumes there is only one table and automatically sends its data
 }
 window.addEventListener("DOMContentLoaded", init);
@@ -167,17 +167,20 @@ function addPoints(data) {
     // COMMENT THE NEXT 14 LINES TO DISABLE SIDEBAR FOR THE MARKERS
     marker.feature = {
       properties: {
-        location: data[row].location,
-        category: data[row].category
+        price: data[row].price,
+        description: data[row].description,
+        image_link: data[row].image_link,
+        video_link: data[row].video_link,
+        link_to_pgp: data[row].link_to_pgp
       }
     };
     marker.on({
       click: function(e) {
         L.DomEvent.stopPropagation(e);
         document.getElementById("sidebar-title").innerHTML =
-          e.target.feature.properties.location;
-        document.getElementById("sidebar-content").innerHTML =
-          e.target.feature.properties.category;
+          e.target.feature.properties.price;
+        display_sidebar_content(document.getElementById("sidebar-content"),
+                                e.target.feature.properties);
         sidebar.open(panelID);
       }
     });
@@ -194,6 +197,31 @@ function addPoints(data) {
       marker.setIcon(icon);
     }
   }
+}
+
+function display_sidebar_content(sidebar, properties) {
+  var linebreak = document.createElement("br");
+
+  var description = document.createTextNode(properties.description);
+  sidebar.appendChild(description);
+
+  var image = document.createElement("IMG");
+  image.src = properties.image_link
+  image.width = "550"
+  image.height = "305"
+  image.style.padding = "10px"
+  sidebar.appendChild(image)
+
+  let video = document.createElement("IFRAME")
+  video.src = properties.video_link  
+  video.width = "550" 
+  video.height = "305" 
+  video.style.padding = "10px"
+  // video.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+  sidebar.appendChild(video)
+  // sidebar.innerHTML = properties.category
+  var link_to_pgp = document.createTextNode(properties.link_to_pgp);
+  sidebar.appendChild(link_to_pgp)
 }
 
 // Returns different colors depending on the string passed
