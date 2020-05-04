@@ -7,21 +7,14 @@
 
 // init() is called as soon as the page loads
 function init() {
-  // PASTE YOUR URLs HERE
-  // these URLs come from Google Sheets 'shareable link' form
-  // the first is the polygon layer and the second the points
-  // var polyURL =
-  //   // "https://docs.google.com/spreadsheets/d/1EUFSaqi30b6oefK0YWWNDDOzwmCTTXlXkFHAc2QrUxM/edit?usp=sharing";
   var pointsURL = 
     "https://docs.google.com/spreadsheets/d/1jBndsqchkcmiYXSIMU6U72jIQG5FId7mVMbrHJitAlI/edit?usp=sharing";
-
-  // Tabletop.init({ key: polyURL, callback: addPolygons, simpleSheet: true });
   Tabletop.init({ key: pointsURL, callback: addPoints, simpleSheet: true }); // simpleSheet assumes there is only one table and automatically sends its data
 }
 window.addEventListener("DOMContentLoaded", init);
 
-// Create a new Leaflet map centered on the continental US
-var map = L.map("map").setView([-34.17500, 24.8300], 14);
+// Create a new Leaflet map centered on st francis bay
+var map = L.map("map").setView([-34.17500, 24.8300], 13);
 
 // This is the Carto Positron basemap
 var basemap = L.tileLayer(
@@ -57,121 +50,29 @@ map.on("click", function() {
 });
 
 // These are declared outisde the functions so that the functions can check if they already exist
-var polygonLayer;
 var pointGroupLayer;
 
-// The form of data must be a JSON representation of a table as returned by Tabletop.js
-// addPolygons first checks if the map layer has already been assigned, and if so, deletes it and makes a fresh one
-// The assumption is that the locally stored JSONs will load before Tabletop.js can pull the external data from Google Sheets
-function addPolygons(data) {
-  if (polygonLayer != null) {
-    // If the layer exists, remove it and continue to make a new one with data
-    polygonLayer.remove();
-  }
-
-  // Need to convert the Tabletop.js JSON into a GeoJSON
-  // Start with an empty GeoJSON of type FeatureCollection
-  // All the rows will be inserted into a single GeoJSON
-  var geojsonStates = {
-    type: "FeatureCollection",
-    features: []
-  };
-
-  for (var row in data) {
-    // The Sheets data has a column 'include' that specifies if that row should be mapped
-    if (data[row].include == "y") {
-      var coords = JSON.parse(data[row].geometry);
-
-      geojsonStates.features.push({
-        type: "Feature",
-        geometry: {
-          type: "MultiPolygon",
-          coordinates: coords
-        },
-        properties: {
-          name: data[row].name,
-          summary: data[row].summary,
-          state: data[row].state,
-          local: data[row].local
-        }
-      });
-    }
-  }
-
-  // The polygons are styled slightly differently on mouse hovers
-  var polygonStyle = { color: "#2ca25f", fillColor: "#99d8c9", weight: 1.5 };
-  var polygonHoverStyle = { color: "green", fillColor: "#2ca25f", weight: 3 };
-
-  polygonLayer = L.geoJSON(geojsonStates, {
-    onEachFeature: function(feature, layer) {
-      layer.on({
-        mouseout: function(e) {
-          e.target.setStyle(polygonStyle);
-        },
-        mouseover: function(e) {
-          e.target.setStyle(polygonHoverStyle);
-        },
-        click: function(e) {
-          // This zooms the map to the clicked polygon
-          // map.fitBounds(e.target.getBounds());
-
-          // if this isn't added, then map.click is also fired!
-          L.DomEvent.stopPropagation(e);
-
-          document.getElementById("sidebar-title").innerHTML =
-            e.target.feature.properties.name;
-          document.getElementById("sidebar-content").innerHTML =
-            e.target.feature.properties.summary;
-          sidebar.open(panelID);
-        }
-      });
-    },
-    style: polygonStyle
-  }).addTo(map);
-}
-
-// addPoints is a bit simpler, as no GeoJSON is needed for the points
-// It does the same check to overwrite the existing points layer once the Google Sheets data comes along
 function addPoints(data) {
   if (pointGroupLayer != null) {
     pointGroupLayer.remove();
   }
   pointGroupLayer = L.layerGroup().addTo(map);
 
-  // Choose marker type. Options are:
-  // (these are case-sensitive, defaults to marker!)
-  // marker: standard point with an icon
-  // circleMarker: a circle with a radius set in pixels
-  // circle: a circle with a radius set in meters
-  var markerType = "marker";
-
-  // Marker radius
-  // Wil be in pixels for circleMarker, metres for circle
-  // Ignore for point
   var markerRadius = 100;
-
+  var idsToDisplay = document.URL.split("?")[1].split("=")[1].split(",")
+  console.log(idsToDisplay)
   for (var row = 0; row < data.length; row++) {
-    var marker;
-    if (markerType == "circleMarker") {
-      marker = L.circleMarker([data[row].lat, data[row].lon], {radius: markerRadius});
-    } else if (markerType == "circle") {
-      marker = L.circle([data[row].lat, data[row].lon], {radius: markerRadius});
-    } else {
-      marker = L.marker([data[row].lat, data[row].lon]);
+    if (idsToDisplay.includes(data[row].primary_id)) {
+      var marker = L.marker([data[row].lat, data[row].lon]);
+      marker.addTo(pointGroupLayer);
     }
-    marker.addTo(pointGroupLayer);
 
-    // UNCOMMENT THIS LINE TO USE POPUPS
-    //marker.bindPopup('<h2>' + data[row].location + '</h2>There's a ' + data[row].level + ' ' + data[row].category + ' here');
-
-    // COMMENT THE NEXT 14 LINES TO DISABLE SIDEBAR FOR THE MARKERS
     marker.feature = {
       properties: {
         price: data[row].price,
-        description: data[row].description,
-        image_link: data[row].image_link,
-        video_link: data[row].video_link,
-        link_to_pgp: data[row].link_to_pgp
+        address: data[row].address,
+        link_to_pgp: data[row].link_to_pgp,
+        link_to_google_maps: data[row].link_to_google_maps
       }
     };
     marker.on({
@@ -193,35 +94,43 @@ function addPoints(data) {
       prefix: "glyphicon",
       extraClasses: "fa-rotate-0"
     });
-    if (!markerType.includes("circle")) {
-      marker.setIcon(icon);
-    }
+    marker.setIcon(icon);
   }
 }
 
 function display_sidebar_content(sidebar, properties) {
-  var linebreak = document.createElement("br");
 
-  var description = document.createTextNode(properties.description);
-  sidebar.appendChild(description);
+  var address = document.getElementById("display-address")
+  if (address) {
+    address.textContent = properties.address
+  } else {
+    var new_address = document.createElement("p")
+    new_address.textContent = properties.address
+    new_address.id = "display-address"
+    // new_address.style.textAlign = "center";
+    sidebar.appendChild(new_address)
+  }
 
-  var image = document.createElement("IMG");
-  image.src = properties.image_link
-  image.width = "550"
-  image.height = "305"
-  image.style.padding = "10px"
-  sidebar.appendChild(image)
-
-  let video = document.createElement("IFRAME")
-  video.src = properties.video_link  
-  video.width = "550" 
-  video.height = "305" 
-  video.style.padding = "10px"
-  // video.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-  sidebar.appendChild(video)
-  // sidebar.innerHTML = properties.category
-  var link_to_pgp = document.createTextNode(properties.link_to_pgp);
-  sidebar.appendChild(link_to_pgp)
+  var link_to_pgp = document.getElementById("link-to-pgp")
+  if (link_to_pgp) {
+    link_to_pgp.href = properties.link_to_pgp
+  } else {
+    var new_link = document.createElement("a")
+    new_link.textContent = "More information on property"
+    new_link.id = "link-to-pgp"
+    new_link.href = properties.link_to_pgp
+    sidebar.appendChild(new_link)
+  }
+  var linkToGoogleMaps = document.getElementById("link-to-google-maps")
+  if (linkToGoogleMaps) {
+    linkToGoogleMaps.href = properties.link_to_google_maps
+  } else {
+    var new_link = document.createElement("a")
+    new_link.textContent = "Google Maps"
+    new_link.id = "link-to-google-maps"
+    new_link.href = properties.link_to_google_maps
+    sidebar.appendChild(new_link)
+  }
 }
 
 // Returns different colors depending on the string passed
