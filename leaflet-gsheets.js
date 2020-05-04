@@ -49,6 +49,7 @@ map.on("click", function() {
   sidebar.close(panelID);
 });
 
+
 // These are declared outisde the functions so that the functions can check if they already exist
 var pointGroupLayer;
 
@@ -58,14 +59,11 @@ function addPoints(data) {
   }
   pointGroupLayer = L.layerGroup().addTo(map);
 
-  var markerRadius = 100;
-  var idsToDisplay = document.URL.split("?")[1].split("=")[1].split(",")
-  console.log(idsToDisplay)
+  data = filter_by_ids(data, document.URL)
+
   for (var row = 0; row < data.length; row++) {
-    if (idsToDisplay.includes(data[row].primary_id)) {
-      var marker = L.marker([data[row].lat, data[row].lon]);
-      marker.addTo(pointGroupLayer);
-    }
+    var marker = L.marker([data[row].lat, data[row].lon]);
+    marker.addTo(pointGroupLayer);
 
     marker.feature = {
       properties: {
@@ -96,6 +94,21 @@ function addPoints(data) {
     });
     marker.setIcon(icon);
   }
+}
+
+function filter_by_ids(data, url) {
+  var splitUrl = url.split("?") 
+  if (splitUrl.length == 1) {
+    return data
+  }
+  var idsToDisplay = splitUrl[1].split("=")[1].split(",")
+  var newData = []
+  for (var row = 0; row < data.length; row++) {
+    if (idsToDisplay.includes(data[row].primary_id)) {
+      newData.push(data[row])
+    }
+  }
+  return newData
 }
 
 function display_sidebar_content(sidebar, properties) {
