@@ -41,7 +41,7 @@ var panelContent = {
   id: panelID,
   tab: "<i class='fa fa-bars active'></i>",
   pane: "<p id='sidebar-content'></p>",
-  title: "<h2 id='sidebar-title'>No state selected</h2>"
+  title: "<h2 id='sidebar-title'>No property selected</h2>"
 };
 sidebar.addPanel(panelContent);
 
@@ -113,36 +113,45 @@ function filter_by_ids(data, url) {
 
 function display_sidebar_content(sidebar, properties) {
 
+  var divContainer = document.getElementById("div-container") 
+  if (!divContainer) {
+    var divContainer = document.createElement("div")
+    divContainer.id = "div-container"
+    sidebar.appendChild(divContainer)
+  }
+
   var address = document.getElementById("display-address")
   if (address) {
     address.textContent = properties.address
   } else {
     var new_address = document.createElement("p")
     new_address.textContent = properties.address
+    new_address.className = "display-text"
     new_address.id = "display-address"
-    // new_address.style.textAlign = "center";
-    sidebar.appendChild(new_address)
+    divContainer.appendChild(new_address)
   }
-
-  var link_to_pgp = document.getElementById("link-to-pgp")
+  
+  var link_to_pgp = document.getElementById("link-to-pgp-div")
   if (link_to_pgp) {
     link_to_pgp.href = properties.link_to_pgp
   } else {
     var new_link = document.createElement("a")
-    new_link.textContent = "More information on property"
+    new_link.textContent = "Property Information         "
     new_link.id = "link-to-pgp"
+    new_link.className = "link-button"
     new_link.href = properties.link_to_pgp
-    sidebar.appendChild(new_link)
+    divContainer.appendChild(new_link)
   }
   var linkToGoogleMaps = document.getElementById("link-to-google-maps")
   if (linkToGoogleMaps) {
     linkToGoogleMaps.href = properties.link_to_google_maps
   } else {
     var new_link = document.createElement("a")
-    new_link.textContent = "Google Maps"
+    new_link.textContent = "Google Maps Location"
     new_link.id = "link-to-google-maps"
+    new_link.className += "link-button"
     new_link.href = properties.link_to_google_maps
-    sidebar.appendChild(new_link)
+    divContainer.appendChild(new_link)
   }
 }
 
@@ -150,9 +159,9 @@ function display_sidebar_content(sidebar, properties) {
 // Used for the points layer
 function getColor(type) {
   switch (type) {
-  case "plot":
-    return "green";
   case "house":
+    return "green";
+  case "plot":
     return "blue";
   default:
     return "green";
