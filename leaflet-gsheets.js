@@ -131,7 +131,7 @@ function display_sidebar_content(sidebar, properties) {
     divContainer.appendChild(new_address)
   }
   
-  var link_to_pgp = document.getElementById("link-to-pgp-div")
+  var link_to_pgp = document.getElementById("link-to-pgp")
   if (link_to_pgp) {
     link_to_pgp.href = properties.link_to_pgp
   } else {
