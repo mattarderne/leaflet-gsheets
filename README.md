@@ -26,3 +26,8 @@ I explained the process in more length in my blog post here: [Leaflet maps with 
 8. Customise the JavaScript however you want...
 
 Get in touch if you need a hand!
+
+
+## UK GEOJSON API
+* https://geoportal.statistics.gov.uk/datasets/regions-december-2019-boundaries-en-buc/geoservice
+* https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Regions_December_2019_Boundaries_EN_BUC/MapServer/0/query?where=1%3D1&outFields=objectid,long,lat,rgn19nm&outSR=4326&f=json
