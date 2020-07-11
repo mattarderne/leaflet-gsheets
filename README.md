@@ -7,7 +7,7 @@ Links
 * [leaflet_points](https://docs.google.com/spreadsheets/d/1y-L6NoijJRmypJ_-Bkrb0EqQm_qcVnCtuLuszOVMD3M/edit#gid=0)
 * [Trip Drawer](https://www.gpsvisualizer.com/draw/)
 
-![image]("Screenshot 2020-07-11 at 17.15.31.png")
+![image](Screenshot 2020-07-11 at 17.15.31.png)
 
 # leaflet-gsheets
 
