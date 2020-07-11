@@ -85,7 +85,7 @@ function addPolygons(data) {
       geojsonStates.features.push({
         type: "Feature",
         geometry: {
-          type: "MultiPolygon",
+          type: "LineString",
           coordinates: coords
         },
         properties: {
