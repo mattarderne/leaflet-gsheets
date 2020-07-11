@@ -1,11 +1,13 @@
 # TODO
 
-* [] make this into a sailing map
+* [ ] make this into a sailing map
 
 Links
 * [leaflet_polys](https://docs.google.com/spreadsheets/d/1Tq5FKZm-OgYg-XRRsoad4160o4YPqU0Srn0iQdufKrQ/edit#gid=0)
 * [leaflet_points](https://docs.google.com/spreadsheets/d/1y-L6NoijJRmypJ_-Bkrb0EqQm_qcVnCtuLuszOVMD3M/edit#gid=0)
 * [Trip Drawer](https://www.gpsvisualizer.com/draw/)
+
+![]("Screenshot 2020-07-11 at 17.15.31.png")
 
 # leaflet-gsheets
 
