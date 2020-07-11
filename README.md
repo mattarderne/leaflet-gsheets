@@ -1,3 +1,12 @@
+# TODO
+
+* [] make this into a sailing map
+
+Links
+* [leaflet_polys](https://docs.google.com/spreadsheets/d/1Tq5FKZm-OgYg-XRRsoad4160o4YPqU0Srn0iQdufKrQ/edit#gid=0)
+* [leaflet_points](https://docs.google.com/spreadsheets/d/1y-L6NoijJRmypJ_-Bkrb0EqQm_qcVnCtuLuszOVMD3M/edit#gid=0)
+* [Trip Drawer](https://www.gpsvisualizer.com/draw/)
+
 # leaflet-gsheets
 
 How to create a simple [Leaflet](https://leafletjs.com/) web map that automatically pulls data from two simple Google Sheets tables. Sidebar created using [leaflet-sidebar-v2](https://github.com/nickpeihl/leaflet-sidebar-v2), and Google Sheets connection with [Tabletop.js](https://github.com/jsoma/tabletop).
